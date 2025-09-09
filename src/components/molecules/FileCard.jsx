@@ -66,7 +66,7 @@ const FileCard = ({ file, onRetry, onRemove }) => {
             </div>
 
             {/* File Info */}
-            <div className="flex-1 min-w-0">
+<div className="flex-1 min-w-0">
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-medium text-gray-900 truncate">
@@ -81,6 +81,19 @@ const FileCard = ({ file, onRetry, onRemove }) => {
                   {getStatusBadge()}
                 </div>
               </div>
+
+              {/* AI Generated Description */}
+              {file.description && (
+                <div className="mt-2 p-2 rounded-md bg-blue-50 border border-blue-200">
+                  <div className="flex items-start space-x-2">
+                    <ApperIcon name="Sparkles" className="h-3 w-3 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-blue-700 font-medium">AI Description</p>
+                      <p className="text-xs text-blue-600 mt-0.5">{file.description}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Progress Bar */}
               {file.status === "uploading" && (

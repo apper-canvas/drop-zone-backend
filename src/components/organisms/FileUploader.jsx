@@ -1,12 +1,12 @@
-import React, { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useCallback, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "react-toastify";
-import DropZone from "@/components/molecules/DropZone";
+import { uploadService } from "@/services/api/uploadService";
+import ApperIcon from "@/components/ApperIcon";
 import FileCard from "@/components/molecules/FileCard";
+import DropZone from "@/components/molecules/DropZone";
 import UploadStats from "@/components/molecules/UploadStats";
 import Button from "@/components/atoms/Button";
-import ApperIcon from "@/components/ApperIcon";
-import { uploadService } from "@/services/api/uploadService";
 
 const FileUploader = () => {
   const [uploadQueue, setUploadQueue] = useState({
@@ -46,7 +46,7 @@ const FileUploader = () => {
       const validation = validateFile(file);
       const fileId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
-      const uploadFile = {
+const uploadFile = {
         id: fileId,
         name: file.name,
         size: file.size,
@@ -56,6 +56,7 @@ const FileUploader = () => {
         error: validation.error,
         file: file, // Keep reference for upload
         uploadedAt: null,
+        description: null,
       };
 
       newFiles.push(uploadFile);
@@ -103,8 +104,8 @@ const FileUploader = () => {
       const file = uploadQueue.files.find(f => f.id === fileId);
       if (!file) return;
 
-      // Simulate upload with progress
-      await uploadService.uploadFile(file.file, (progress) => {
+// Upload file with progress tracking
+      const result = await uploadService.uploadFile(file.file, (progress) => {
         setUploadQueue(prev => ({
           ...prev,
           files: prev.files.map(f =>
@@ -122,7 +123,8 @@ const FileUploader = () => {
                 ...f,
                 status: "completed",
                 progress: 100,
-                uploadedAt: new Date(),
+                uploadedAt: result?.uploadedAt || new Date().toISOString(),
+                description: result?.description || null,
                 file: undefined, // Clear file reference
               }
             : f
